@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: qu-queue
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    plan: free
+    disk:
+      name: queueos-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: QU_BEHIND_HTTPS_PROXY
+        value: "true"
+      - key: QU_DB_PATH
+        value: /var/data/qu.sqlite
+      - key: QU_JWT_SECRET
+        generateValue: true
+      - key: QU_PLATFORM_OWNER_EMAIL
+        sync: false
+      - key: QU_PLATFORM_OWNER_PASSWORD
+        sync: false

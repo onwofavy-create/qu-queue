@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Your ticket — QU</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/">QU<span>.</span></a>
+      <span class="pill">Live ticket</span>
+    </header>
+    <main class="panel narrow" id="ticketView">
+      <div class="eyebrow">YOUR PLACE</div>
+      <div class="bigTicket" id="ticketNo">—</div>
+      <h2 id="serviceName">Loading…</h2>
+      <p class="muted" id="branchLabel">Company queue status</p>
+      <div class="livegrid livegrid-3">
+        <div>
+          <strong id="position">—</strong>
+          <span>your position</span>
+        </div>
+        <div>
+          <strong id="ahead" class="liveval">—</strong>
+          <span>people ahead</span>
+        </div>
+        <div>
+          <strong id="wait" class="liveval">—</strong>
+          <span>estimated wait</span>
+        </div>
+      </div>
+      <div class="return" id="returnState">Checking your position…</div>
+      <div class="notice-box" id="appReminder">Download the app for reminders and faster queue updates.</div>
+      <button id="cancelBtn" class="button danger" type="button">Cancel ticket</button>
+      <p class="tiny">This page updates live. When someone finishes or skips, your place and wait time rearrange automatically.</p>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

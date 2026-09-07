@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Staff — QU</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/">QU<span>.</span></a>
+      <div class="topactions">
+        <a id="ownerLink" class="muted hidden" href="owner.html">Owner console</a>
+        <div class="whoami">
+          <strong id="staffName"></strong>
+          <span id="staffStation" class="muted"></span>
+        </div>
+        <div id="accountSwitcher"></div>
+        <button id="logout" class="linkbtn" type="button">Sign out</button>
+      </div>
+    </header>
+    <main class="dashboard">
+      <section class="dashhead">
+        <div>
+          <div class="eyebrow">LIVE OPERATIONS</div>
+          <h1 id="companyName">Queue</h1>
+          <p class="muted" id="staffHint">Your account controls this station only.</p>
+        </div>
+        <div class="liveDot">● Live</div>
+      </section>
+
+      <section class="stats stats-6" id="outcomeStats">
+        <div><span>Waiting</span><strong id="waitingCount">0</strong></div>
+        <div><span>Serving</span><strong id="servingCount">0</strong></div>
+        <div><span>Done</span><strong id="completedCount">0</strong></div>
+        <div><span>Skipped</span><strong id="skippedCount">0</strong></div>
+        <div><span>No-show</span><strong id="noshowCount">0</strong></div>
+        <div><span>Cancelled</span><strong id="cancelledCount">0</strong></div>
+      </section>
+
+      <section class="toolbar card">
+        <div class="cardhead">
+          <h2>Your station</h2>
+          <button class="button small" id="refresh" type="button">Refresh</button>
+        </div>
+        <p class="muted" id="stationLockedNote">Serving from your assigned station.</p>
+        <label class="inline hidden" id="stationPickWrap">Station
+          <select id="stationSelect"></select>
+        </label>
+      </section>
+
+      <section class="card" id="walkinCard">
+        <div class="cardhead"><h2>+ Add Walk-in</h2></div>
+        <form id="walkinForm" class="inlineform walkin">
+          <select id="walkinService" name="service_id" required></select>
+          <input name="name" placeholder="Customer name (optional)">
+          <input name="phone" placeholder="Phone (optional)" inputmode="tel">
+          <button class="button primary" type="submit">Add to queue</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><h2>Current queue</h2></div>
+        <div id="queue" class="queue"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead">
+          <h2>Today’s outcomes</h2>
+          <div class="filtertabs" id="historyFilter">
+            <button type="button" class="tab active" data-filter="ALL">All</button>
+            <button type="button" class="tab" data-filter="COMPLETED">Done</button>
+            <button type="button" class="tab" data-filter="SKIPPED">Skipped</button>
+            <button type="button" class="tab" data-filter="NO_SHOW">No-show</button>
+            <button type="button" class="tab" data-filter="CANCELLED">Cancelled</button>
+          </div>
+        </div>
+        <div id="history" class="queue"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><h2>Staff performance today</h2></div>
+        <div id="staffPerf" class="perflist"></div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

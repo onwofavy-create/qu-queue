@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Join queue — QU</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/">QU<span>.</span></a>
+      <a href="/" class="muted">← Home</a>
+    </header>
+    <main class="panel narrow">
+      <div id="join">
+        <div class="eyebrow">JOIN QUEUE</div>
+        <h1>Get your place.</h1>
+        <p class="muted">Enter your company access code or token from the desk, QR poster, or company message.</p>
+        <form id="companyForm">
+          <label>Company code or access token
+            <input id="companyAccess" required placeholder="Q-ABCDE123 or ELB7-K92P" autocomplete="off" maxlength="30">
+          </label>
+          <button class="button primary" type="submit">Continue →</button>
+        </form>
+        <div id="services" class="hidden"></div>
+      </div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

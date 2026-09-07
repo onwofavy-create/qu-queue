@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Internal usage — QueueOS</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/">QU<span>.</span></a>
+      <span class="pill">Private platform usage</span>
+    </header>
+    <main class="dashboard">
+      <section class="dashhead">
+        <div>
+          <div class="eyebrow">INTERNAL ONLY</div>
+          <h1>Usage overview</h1>
+        </div>
+        <input id="search" type="search" placeholder="Search company or email">
+      </section>
+      <section id="totals" class="stats stats-6"></section>
+      <section class="card wide">
+        <div class="cardhead"><h2>Companies</h2></div>
+        <div id="companies" class="queue"></div>
+      </section>
+      <section class="card wide">
+        <div class="cardhead"><h2>Users</h2></div>
+        <div id="users" class="queue"></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (m) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
+    async function load() {
+      const response = await fetch('/api/internal/usage?search=' + encodeURIComponent(document.querySelector('#search').value), {
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw Error(data.error || 'Usage data unavailable');
+      document.querySelector('#totals').innerHTML = Object.entries(data.totals).map(([key, value]) =>
+        `<div><span>${esc(key.replaceAll('_', ' '))}</span><strong>${esc(value)}</strong></div>`).join('');
+      document.querySelector('#companies').innerHTML = data.companies.length
+        ? data.companies.map((company) => `<article class="qrow compact">
+            <div class="qinfo"><strong>${esc(company.name)}</strong><span>${esc(company.owner_email)} · created ${esc(company.created_at)}</span></div>
+            <span>${company.staff_count} staff · ${company.ticket_count} tickets · ${company.queue_activity} events</span>
+          </article>`).join('')
+        : '<div class="empty">No companies found.</div>';
+      document.querySelector('#users').innerHTML = data.users.length
+        ? data.users.map((user) => `<article class="qrow compact">
+            <div class="qinfo"><strong>${esc(user.name)}</strong><span>${esc(user.email)} · ${esc(user.company_name)}</span></div>
+            <span>${esc(user.role)} · last activity ${esc(user.last_activity || 'never')}</span>
+          </article>`).join('')
+        : '<div class="empty">No users found.</div>';
+    }
+    document.querySelector('#search').addEventListener('input', () => load().catch((error) => alert(error.message)));
+    load().catch((error) => alert(error.message));
+  </script>
+</body>
+</html>

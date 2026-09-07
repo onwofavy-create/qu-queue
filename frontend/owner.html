@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Owner — QU</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/">QU<span>.</span></a>
+      <div class="topactions">
+        <a class="muted" href="staff.html">Staff queue →</a>
+        <span id="ownerName" class="muted"></span>
+        <div id="accountSwitcher"></div>
+        <button id="ownerLogout" class="linkbtn" type="button">Sign out</button>
+      </div>
+    </header>
+    <main class="dashboard">
+      <section class="dashhead">
+        <div>
+          <div class="eyebrow">COMPANY CONTROL</div>
+          <h1>Your queue</h1>
+        </div>
+      </section>
+
+      <section id="branches" class="hidden"></section>
+
+      <section id="branchDetail" class="hidden detailstack">
+        <section class="dashhead compact">
+          <div>
+            <div class="eyebrow">COMPANY</div>
+            <h2 id="detailTitle">Company</h2>
+            <span class="code" id="detailCode"></span>
+          </div>
+        </section>
+
+        <section class="stats stats-6" id="ownerStats">
+          <div><span>Done</span><strong id="oDone">0</strong></div>
+          <div><span>Skipped</span><strong id="oSkip">0</strong></div>
+          <div><span>No-show</span><strong id="oNoshow">0</strong></div>
+          <div><span>Cancelled</span><strong id="oCancel">0</strong></div>
+          <div><span>Waiting</span><strong id="oWait">0</strong></div>
+          <div><span>Serving</span><strong id="oServe">0</strong></div>
+        </section>
+
+        <div class="ownergrid">
+          <section class="card wide">
+            <div class="cardhead"><h2>Customer access</h2></div>
+            <p class="muted tinyblock">Choose how customers join your company. If you create a new QR or access token, the previous active one must be destroyed first.</p>
+            <div class="stackform">
+              <label>Access method
+                <select id="accessModeSelect">
+                  <option value="token">Token</option>
+                  <option value="qr">QR code</option>
+                  <option value="both">Both</option>
+                </select>
+              </label>
+              <div class="inline-actions">
+                <button id="createAccessBtn" class="button primary small" type="button">Create access</button>
+                <button id="destroyAccessBtn" class="button danger small" type="button">Destroy active access</button>
+              </div>
+            </div>
+            <div id="accessPreview" class="access-preview hidden"></div>
+          </section>
+
+          <section class="card">
+            <div class="cardhead"><h2>Services</h2></div>
+            <p class="muted tinyblock">Start fast with common services, then refine names and categories later.</p>
+            <ul id="serviceList" class="plainlist"></ul>
+            <div class="stackform">
+              <label>Fast setup
+                <select id="quickServicePreset">
+                  <option value="general">General Queue</option>
+                  <option value="diagnostic">Diagnostic center</option>
+                  <option value="clinic">Clinic</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </label>
+              <button id="quickServiceBtn" class="button ghost small" type="button">Add common services</button>
+            </div>
+            <form id="serviceForm" class="stackform">
+              <input name="name" placeholder="Internal service name (e.g. CBC)" required>
+              <input name="customer_name" placeholder="Customer-facing name (e.g. Blood Test)">
+              <input name="category" placeholder="Category (e.g. Blood & Lab)">
+              <input name="search_keywords" placeholder="Search keywords (e.g. cbc, blood, test)">
+              <input name="estimated_duration" type="number" min="1" max="480" value="15" placeholder="Minutes">
+              <button class="button primary small" type="submit">Add service</button>
+            </form>
+          </section>
+
+          <section class="card">
+            <div class="cardhead"><h2>Stations</h2></div>
+            <ul id="stationList" class="plainlist"></ul>
+            <form id="stationForm" class="stackform">
+              <input name="name" placeholder="Station name" required>
+              <select id="stationService" name="service_id"></select>
+              <button class="button primary small" type="submit">Add station</button>
+            </form>
+          </section>
+
+          <section class="card wide">
+            <div class="cardhead"><h2>Staff accounts</h2></div>
+            <p class="muted tinyblock">Each person gets their own email, password, and station. They only serve from that desk when lock-to-station is on.</p>
+            <ul id="staffList" class="plainlist"></ul>
+            <form id="staffForm" class="stackform staffcreate">
+              <input name="name" placeholder="Full name" required>
+              <input name="email" type="email" placeholder="Unique email login" required>
+              <input name="password" type="password" placeholder="Password (8+)" minlength="8" required>
+              <select name="role">
+                <option value="receptionist">Receptionist</option>
+                <option value="admin">Admin</option>
+              </select>
+              <select id="staffStation" name="station_id">
+                <option value="">Assign station…</option>
+              </select>
+              <button class="button primary small" type="submit">Create staff account</button>
+            </form>
+          </section>
+
+          <section class="card wide">
+            <div class="cardhead"><h2>Queue control settings</h2></div>
+            <form id="settingsForm" class="settingsgrid">
+              <label>Grace period (minutes)
+                <input id="gracePeriod" name="grace_period_minutes" type="number" min="1" max="60" value="5">
+              </label>
+              <label>No-show action
+                <select id="noShowAction" name="no_show_action">
+                  <option value="skip">Mark no-show</option>
+                  <option value="end_of_queue">Send to end of queue</option>
+                  <option value="staff_decides">Leave for staff</option>
+                </select>
+              </label>
+              <label>Ticket prefix
+                <input id="ticketPrefix" name="ticket_prefix" maxlength="8" value="Q">
+              </label>
+              <label>Return soon when ≤ people ahead
+                <input id="returnSoon" name="return_soon_threshold" type="number" min="1" max="50" value="5">
+              </label>
+              <label>Return now when ≤ people ahead
+                <input id="returnNow" name="return_now_threshold" type="number" min="0" max="50" value="2">
+              </label>
+              <div class="checkgrid">
+                <label class="check"><input id="allowCancel" type="checkbox" checked> Customers can cancel</label>
+                <label class="check"><input id="allowWalkins" type="checkbox" checked> Staff can add walk-ins</label>
+                <label class="check"><input id="staffSkip" type="checkbox" checked> Staff can skip</label>
+                <label class="check"><input id="staffCancel" type="checkbox" checked> Staff can cancel</label>
+                <label class="check"><input id="staffRestore" type="checkbox" checked> Staff can restore</label>
+                <label class="check"><input id="showPhone" type="checkbox" checked> Show customer phone</label>
+                <label class="check"><input id="lockStation" type="checkbox" checked> Lock staff to assigned station</label>
+              </div>
+              <button class="button primary" type="submit">Save settings</button>
+            </form>
+          </section>
+
+          <section class="card wide">
+            <div class="cardhead"><h2>Today’s outcome log</h2></div>
+            <div id="ownerHistory" class="queue"></div>
+          </section>
+
+          <section class="card wide">
+            <div class="cardhead"><h2>Activity history</h2></div>
+            <p class="muted tinyblock">A record of important queue and staff actions in your company.</p>
+            <div id="ownerActivity" class="queue"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

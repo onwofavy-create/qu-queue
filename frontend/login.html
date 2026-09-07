@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sign in — QU</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/">QU<span>.</span></a>
+      <a class="muted" href="/">← Home</a>
+    </header>
+    <main class="panel narrow">
+      <div class="eyebrow">COMPANY ACCESS</div>
+      <h1 id="authTitle">Run your queue.</h1>
+      <p id="authSub" class="muted">Sign in to manage your company, staff, and customer queue.</p>
+
+      <div id="loginPanel">
+        <form id="loginForm">
+          <label>Email<input id="email" type="email" value="owner@qu.local" required autocomplete="username"></label>
+          <label>Password<input id="password" type="password" value="password" required autocomplete="current-password"></label>
+          <label class="check"><input id="rememberMe" type="checkbox"> Remember this device</label>
+          <button class="button primary" type="submit">Sign in →</button>
+        </form>
+      </div>
+
+      <div id="signupPanel" hidden>
+        <form id="signupForm">
+          <label>Company name<input id="signupCompany" type="text" placeholder="ABC Diagnostics" required></label>
+          <label>Owner name<input id="signupOwner" type="text" placeholder="Jane Doe" required></label>
+          <label>Email<input id="signupEmail" type="email" placeholder="owner@company.com" required autocomplete="username"></label>
+          <label>Password<input id="signupPassword" type="password" placeholder="At least 8 characters" required autocomplete="new-password"></label>
+          <button class="button primary" type="submit">Create company account →</button>
+        </form>
+      </div>
+
+      <p class="tiny">
+        <span id="toggleLabel">New here?</span>
+        <button class="button sub" type="button" id="toggleAuth">Create company account</button>
+      </p>
+    </main>
+  </div>
+  <script>
+    const loginPanel = document.querySelector('#loginPanel');
+    const signupPanel = document.querySelector('#signupPanel');
+    const authTitle = document.querySelector('#authTitle');
+    const authSub = document.querySelector('#authSub');
+    const toggleLabel = document.querySelector('#toggleLabel');
+    const toggleAuth = document.querySelector('#toggleAuth');
+    let showSignup = false;
+
+    function setAuthMode(mode) {
+      showSignup = mode === 'signup';
+      loginPanel.hidden = showSignup;
+      signupPanel.hidden = !showSignup;
+      authTitle.textContent = showSignup ? 'Create your company account.' : 'Run your queue.';
+      authSub.textContent = showSignup
+        ? 'Create the company account first, then add services and staff.'
+        : 'Sign in to manage your company and serve customers.';
+      toggleLabel.textContent = showSignup ? 'Already have an account?' : 'New here?';
+      toggleAuth.textContent = showSignup ? 'Back to sign in' : 'Create company account';
+    }
+    toggleAuth.onclick = () => setAuthMode(showSignup ? 'login' : 'signup');
+
+    const rememberedEmail = sessionStorage.getItem('qu_login_email');
+    if (rememberedEmail) {
+      document.querySelector('#email').value = rememberedEmail;
+      sessionStorage.removeItem('qu_login_email');
+    }
+    document.querySelector('#loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const deviceId = localStorage.getItem('qu_device_id') || crypto.randomUUID();
+        localStorage.setItem('qu_device_id', deviceId);
+        const r = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            email: email.value,
+            password: password.value,
+            remember_me: rememberMe.checked,
+            device_id: deviceId,
+          }),
+        });
+        const d = await r.json();
+        if (!r.ok) throw Error(d.error || 'Sign in failed');
+        const accounts = JSON.parse(localStorage.getItem('qu_accounts') || '[]')
+         .filter((item) => item.email !== d.user.email);
+        accounts.unshift({
+          email: d.user.email,
+          name: d.user.name,
+          role: d.user.role,
+          company: d.user.orgId ? String(d.user.orgId) : 'Platform',
+        });
+        localStorage.setItem('qu_accounts', JSON.stringify(accounts.slice(0, 8)));
+        const returnPath = sessionStorage.getItem('qu_return_after_login');
+        sessionStorage.removeItem('qu_return_after_login');
+        location.href =
+          returnPath || (d.user.role === 'owner' || d.user.role === 'admin'
+            ? '/owner.html'
+            : '/staff.html');
+      } catch (x) {
+        alert(x.message);
+      }
+    };
+
+    document.querySelector('#signupForm').onsubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const deviceId = localStorage.getItem('qu_device_id') || crypto.randomUUID();
+        localStorage.setItem('qu_device_id', deviceId);
+        const payload = {
+          company_name: signupCompany.value,
+          owner_name: signupOwner.value,
+          email: signupEmail.value,
+          password: signupPassword.value,
+          remember_me: true,
+          device_id: deviceId,
+        };
+        const r = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const d = await r.json();
+        if (!r.ok) throw Error(d.error || 'Company account creation failed');
+        const accounts = JSON.parse(localStorage.getItem('qu_accounts') || '[]');
+        accounts.unshift({
+          email: d.user.email,
+          name: d.user.name,
+          role: d.user.role,
+          company: d.company?.name || 'Company',
+        });
+        localStorage.setItem('qu_accounts', JSON.stringify(accounts.slice(0, 8)));
+        location.href = '/owner.html';
+      } catch (x) {
+        alert(x.message);
+      }
+    };
+  </script>
+</body>
+</html>

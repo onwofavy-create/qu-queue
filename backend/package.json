@@ -1,0 +1,10 @@
+{
+  "name":"qu",
+  "version":"3.0.0",
+  "private":true,
+  "description":"QU — production-oriented queue management SaaS with zero npm runtime dependencies",
+  "main":"src/server.js",
+  "engines":{"node":">=22.5.0"},
+  "scripts":{"start":"node src/server.js","dev":"node --watch src/server.js","test":"node --test"},
+  "dependencies":{}
+}
