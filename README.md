@@ -89,6 +89,7 @@ This is a strong pilot-ready codebase, not a claim that one ZIP file is magicall
 4. Set `QU_PLATFORM_OWNER_EMAIL` and `QU_PLATFORM_OWNER_PASSWORD` when prompted.
 5. Deploy. Render provides an HTTPS URL such as `https://qu-queue.onrender.com`.
 
-The included persistent disk keeps the SQLite database under `/var/data`. Review
-Render's current free-plan storage and availability limits before using this for
-real businesses.
+The free-tier Blueprint uses temporary `/tmp` storage because Render free web
+services do not support persistent disks. Use this only for testing: the
+database can be lost when the service restarts. For real businesses, use a
+paid persistent disk or migrate the database to managed PostgreSQL.
